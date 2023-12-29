@@ -9,6 +9,9 @@ spring:
     password: lvye
 server:
   port: 8080
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
 
 
 #下面这些内容是为了让MyBatis映射
