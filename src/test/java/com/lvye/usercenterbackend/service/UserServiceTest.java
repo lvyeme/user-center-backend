@@ -110,4 +110,41 @@ void userRegister() {
 
     }
 
+    @Test
+    void registerSuccess() {
+        String useraccount = "yupi";
+        String userpassword = "";
+        String checkpassword = "123456";
+        long result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        useraccount = "yu";
+        result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        useraccount = "yupi";
+        userpassword = "123456";
+        result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        useraccount = "yu pi";
+        userpassword = "12345678";
+        result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        checkpassword = "123456789";
+        result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        useraccount = "dogyupi";
+        checkpassword = "12345678";
+        result = userService.userRegister(useraccount, userpassword, checkpassword);
+        Assertions.assertEquals(-1,result);
+
+        useraccount = "yupi";
+        result =  userService.userRegister(useraccount, userpassword, checkpassword);
+       // Assertions.assertEquals(-1,result);
+        Assertions.assertEquals(-1,result);
+
+    }
 }

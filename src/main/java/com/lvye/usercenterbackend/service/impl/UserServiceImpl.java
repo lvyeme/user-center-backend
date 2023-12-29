@@ -53,7 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return -1;
         }
         //2. 加密
-        final String SALT = "yupi";
+        final String SALT = "lye";
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT +
                 userPassword).getBytes());
         //3. 写入数据库
