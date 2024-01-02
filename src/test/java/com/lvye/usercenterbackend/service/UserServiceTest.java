@@ -147,4 +147,13 @@ void userRegister() {
         Assertions.assertEquals(-1,result);
 
     }
+    @Test
+    void lvyeuserRegister() {
+        //非空
+        String userAccount = "lvye";
+        String userPassword = "12345678";
+        String checkPassword = "12345678";
+        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+    }
 }
