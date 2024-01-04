@@ -4,9 +4,9 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/idol
-    username: root
-    password: lvye
+    url: jdbc:mysql://localhost:3306/your basedata
+    username: your Account
+    password: your Password
 server:
   port: 8080
 mybatis-plus:
