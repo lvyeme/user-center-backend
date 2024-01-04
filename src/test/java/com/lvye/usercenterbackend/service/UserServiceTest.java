@@ -156,4 +156,13 @@ void userRegister() {
         long result = userService.userRegister(userAccount, userPassword, checkPassword);
         Assertions.assertEquals(-1, result);
     }
+    @Test
+    void adminRegister() {
+        //非空
+        String userAccount = "admin";
+        String userPassword = "12345678";
+        String checkPassword = "12345678";
+        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+    }
 }

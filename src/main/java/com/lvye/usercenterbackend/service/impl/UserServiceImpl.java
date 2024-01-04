@@ -13,9 +13,10 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.Session;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.lvye.usercenterbackend.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  *
@@ -33,7 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String SALT = "lvye" ;
 
-    public static final String USER_LOGIN_STATE = "userLoginState" ;
+
     @Override
     public long userRegister(String userAccount, String userPassword, String chackPassword) {
 
@@ -116,10 +117,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         saftyUser.setGender(user.getGender());
         saftyUser.setEmail(user.getEmail());
         saftyUser.setUserStatus(user.getUserStatus());
+        saftyUser.setUserRole(user.getUserRole());
         saftyUser.setPhone(user.getPhone());
         saftyUser.setCreateTime(user.getCreateTime());
         // 4.记录用户的登录状态
-        request.getSession().setAttribute("USER_LOGIN_STATE",saftyUser);
+        request.getSession().setAttribute(USER_LOGIN_STATE,saftyUser);
         return user;
 
     }

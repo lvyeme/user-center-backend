@@ -8,13 +8,13 @@ import lombok.Data;
 
 /**
  * ⽤户表
- * @TableName user
+ *  user
  */
 @TableName(value ="user")
 @Data
 public class User implements Serializable {
     /**
-     * 
+     * id
      */
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -53,6 +53,10 @@ public class User implements Serializable {
      * 状态 0-正常
      */
     private Integer userStatus;
+    /**
+     * 状态 0-普通用户 1-管理员
+     */
+    private Integer userRole;
 
     /**
      * 电话
