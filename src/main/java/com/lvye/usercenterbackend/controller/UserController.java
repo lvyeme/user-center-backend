@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.lvye.usercenterbackend.constant.UserConstant.ADMIN_ROLE;
 import static com.lvye.usercenterbackend.constant.UserConstant.USER_LOGIN_STATE;
@@ -65,7 +66,12 @@ public class UserController {
         if (StringUtils.isNotBlank(username)) {
             queryWrapper.like("username", username);
         }
-        return userService.list(queryWrapper);
+        List<User> userList = userService.list(queryWrapper);
+        /*return userList.stream().map(user -> {
+            return userService.getSafetyUser(user);
+        }).collect(Collectors.toList());*/
+        //简写为
+        return userList.stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
     }
     @PostMapping("/delete")
     public boolean deleteUser(@RequestBody long id,HttpServletRequest request) {

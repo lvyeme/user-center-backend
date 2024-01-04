@@ -1,5 +1,4 @@
 package com.lvye.usercenterbackend.service.impl;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,6 +6,7 @@ import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.service.UserService;
 import com.lvye.usercenterbackend.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.realm.UserDatabaseRealm;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -109,21 +109,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         // 3.用户脱敏
-        User saftyUser = new User();
-        saftyUser.setId(user.getId());
-        saftyUser.setUsername(user.getUsername());
-        saftyUser.setUserAccount(user.getUserAccount());
-        saftyUser.setAvatarUrl(user.getAvatarUrl());
-        saftyUser.setGender(user.getGender());
-        saftyUser.setEmail(user.getEmail());
-        saftyUser.setUserStatus(user.getUserStatus());
-        saftyUser.setUserRole(user.getUserRole());
-        saftyUser.setPhone(user.getPhone());
-        saftyUser.setCreateTime(user.getCreateTime());
+        User saftyUser = getSafetyUser(user);
         // 4.记录用户的登录状态
         request.getSession().setAttribute(USER_LOGIN_STATE,saftyUser);
         return user;
+    }
 
+    /**
+     * 用户脱敏
+     * @param originUser
+     * @return
+     */
+    @Override
+    public User getSafetyUser(User originUser){
+        User saftyUser = new User();
+        saftyUser.setId(originUser.getId());
+        saftyUser.setUsername(originUser.getUsername());
+        saftyUser.setUserAccount(originUser.getUserAccount());
+        saftyUser.setAvatarUrl(originUser.getAvatarUrl());
+        saftyUser.setGender(originUser.getGender());
+        saftyUser.setEmail(originUser.getEmail());
+        saftyUser.setUserStatus(originUser.getUserStatus());
+        saftyUser.setUserRole(originUser.getUserRole());
+        saftyUser.setPhone(originUser.getPhone());
+        saftyUser.setCreateTime(originUser.getCreateTime());
+        return saftyUser;
     }
 }
 
