@@ -6,7 +6,7 @@ import com.lvye.usercenterbackend.model.domain.request.userLoginRequest;
 import com.lvye.usercenterbackend.model.domain.request.userRegisterRequest;
 import com.lvye.usercenterbackend.service.UserService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.omg.CORBA.Current;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,7 +29,7 @@ public class UserController {
     private UserService userService;
 
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public Long userRegister(@RequestBody userRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             return null;
@@ -56,6 +56,18 @@ public class UserController {
         return userService.userLogin(userAccount, userPassword, request);
     }
 
+    @GetMapping("/current")
+    public User getCurrentUser(HttpServletRequest request){
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (currentUser == null){
+            return null;
+        }
+        Long userId = currentUser.getId();
+        //TODO 判断用户是否合法
+        User user = userService.getById(userId);
+        return userService.getSafetyUser(user);
+    }
     @GetMapping("/search")
     public List<User> userSearch(String username ,HttpServletRequest request) {
         //是否管理员
@@ -71,7 +83,8 @@ public class UserController {
             return userService.getSafetyUser(user);
         }).collect(Collectors.toList());*/
         //简写为
-        return userList.stream().map(user -> userService.getSafetyUser(user)).collect(Collectors.toList());
+        return userList.stream().map(user -> userService.
+                getSafetyUser(user)).collect(Collectors.toList());
     }
     @PostMapping("/delete")
     public boolean deleteUser(@RequestBody long id,HttpServletRequest request) {

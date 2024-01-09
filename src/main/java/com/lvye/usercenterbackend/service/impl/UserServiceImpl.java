@@ -6,7 +6,6 @@ import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.service.UserService;
 import com.lvye.usercenterbackend.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.realm.UserDatabaseRealm;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -122,6 +121,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public User getSafetyUser(User originUser){
+        if (originUser == null){
+            return null;
+        }
         User saftyUser = new User();
         saftyUser.setId(originUser.getId());
         saftyUser.setUsername(originUser.getUsername());
