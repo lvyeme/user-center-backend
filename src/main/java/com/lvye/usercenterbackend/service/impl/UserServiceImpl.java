@@ -12,6 +12,7 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.Session;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public long userRegister(String userAccount, String userPassword, String chackPassword) {
+    public long userRegister(String userAccount, String userPassword, String chackPassword,String planetCode) {
 
         //1. 校验
         if (StringUtils.isAnyBlank(userAccount,userPassword, chackPassword)){
@@ -45,6 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return -1;
         }
         if (userPassword.length() < 8 || chackPassword.length() < 8){
+            return -1;
+        }
+        if (planetCode.length() > 5){
             return -1;
         }
         //校验账户不能含有特殊字符
@@ -64,6 +68,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (count > 0) {
             return -1;
         }
+        //编号不能重复
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("planetCode",planetCode);
+        count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            return -1;
+        }
         //2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT +
                 userPassword).getBytes());
@@ -71,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
+        user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
         if (!saveResult){
             return -1;
@@ -130,6 +142,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         saftyUser.setUserAccount(originUser.getUserAccount());
         saftyUser.setAvatarUrl(originUser.getAvatarUrl());
         saftyUser.setGender(originUser.getGender());
+        saftyUser.setPlanetCode(originUser.getPlanetCode());
         saftyUser.setEmail(originUser.getEmail());
         saftyUser.setUserStatus(originUser.getUserStatus());
         saftyUser.setUserRole(originUser.getUserRole());
@@ -137,6 +150,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         saftyUser.setCreateTime(originUser.getCreateTime());
         return saftyUser;
     }
+
+    /*****
+     * 用户注销
+     * @param request
+     */
+    @Override
+    public int userLogout(HttpServletRequest request) {
+        //移除登录态
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return 1;
+    }
+
 }
 
 
