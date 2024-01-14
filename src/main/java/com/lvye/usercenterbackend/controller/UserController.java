@@ -1,15 +1,18 @@
 package com.lvye.usercenterbackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lvye.usercenterbackend.common.BaseResponse;
 import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.model.domain.request.userLoginRequest;
 import com.lvye.usercenterbackend.model.domain.request.userRegisterRequest;
 import com.lvye.usercenterbackend.service.UserService;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +32,7 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public Long userRegister(@RequestBody userRegisterRequest userRegisterRequest) {
+    public BaseResponse<Long> userRegister(@RequestBody userRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             return null;
         }
@@ -40,11 +43,12 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword ,planetCode)) {
             return null;
         }
-        return userService.userRegister(userAccount, userPassword, checkPassword,planetCode);
+        long result = userService.userRegister(userAccount, userPassword, checkPassword,planetCode);
+        return new BaseResponse<>(0,result,"ok");
     }
 
     @PostMapping("/login")
-    public User userLogin(@RequestBody userLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<User> userLogin(@RequestBody userLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             return null;
         }
@@ -53,7 +57,8 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             return null;
         }
-        return userService.userLogin(userAccount, userPassword, request);
+        User user = userService.userLogin(userAccount, userPassword, request);
+        return new  BaseResponse<>(0, user,"ok");
     }
 
     @PostMapping("/logout")
