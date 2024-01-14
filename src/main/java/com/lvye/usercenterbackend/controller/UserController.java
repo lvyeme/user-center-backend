@@ -2,6 +2,7 @@ package com.lvye.usercenterbackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lvye.usercenterbackend.common.BaseResponse;
+import com.lvye.usercenterbackend.common.ResultUtils;
 import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.model.domain.request.userLoginRequest;
 import com.lvye.usercenterbackend.model.domain.request.userRegisterRequest;
@@ -44,7 +45,10 @@ public class UserController {
             return null;
         }
         long result = userService.userRegister(userAccount, userPassword, checkPassword,planetCode);
+/*
         return new BaseResponse<>(0,result,"ok");
+*/
+        return ResultUtils.success(result);
     }
 
     @PostMapping("/login")
@@ -62,15 +66,15 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public Integer userLogout(HttpServletRequest request) {
+    public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
             return null;
         }
-        return userService.userLogout(request);
+        return ResultUtils.success(userService.userLogout(request));
     }
 
     @GetMapping("/current")
-    public User getCurrentUser(HttpServletRequest request){
+    public BaseResponse<User> getCurrentUser(HttpServletRequest request){
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null){
@@ -79,10 +83,11 @@ public class UserController {
         Long userId = currentUser.getId();
         //TODO 判断用户是否合法
         User user = userService.getById(userId);
-        return userService.getSafetyUser(user);
+        User safetyUser = userService.getSafetyUser(user);
+        return ResultUtils.success(safetyUser);
     }
     @GetMapping("/search")
-    public List<User> userSearch(String username ,HttpServletRequest request) {
+    public BaseResponse<List<User>> userSearch(String username ,HttpServletRequest request) {
         //是否管理员
         if (!isAdmin(request)){
             return new ArrayList<>();
@@ -96,19 +101,21 @@ public class UserController {
             return userService.getSafetyUser(user);
         }).collect(Collectors.toList());*/
         //简写为
-        return userList.stream().map(user -> userService.
+        List<User> list = userList.stream().map(user -> userService.
                 getSafetyUser(user)).collect(Collectors.toList());
+        return ResultUtils.success(list);
     }
     @PostMapping("/delete")
-    public boolean deleteUser(@RequestBody long id,HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteUser(@RequestBody long id,HttpServletRequest request) {
         //是否管理员
         if (!isAdmin(request)){
-            return false;
+            return null;
         }
         if (id <= 0){
-            return false;
+            return null;
         }
-        return userService.removeById(id);
+        boolean removeById = userService.removeById(id);
+        return ResultUtils.success(removeById);
     }
 
     /**
