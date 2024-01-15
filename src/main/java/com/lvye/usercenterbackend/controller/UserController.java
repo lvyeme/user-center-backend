@@ -2,7 +2,9 @@ package com.lvye.usercenterbackend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lvye.usercenterbackend.common.BaseResponse;
+import com.lvye.usercenterbackend.common.ErrorCode;
 import com.lvye.usercenterbackend.common.ResultUtils;
+import com.lvye.usercenterbackend.exception.BusinessException;
 import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.model.domain.request.userLoginRequest;
 import com.lvye.usercenterbackend.model.domain.request.userRegisterRequest;
@@ -35,7 +37,7 @@ public class UserController {
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody userRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARMS_ERORR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
@@ -90,7 +92,7 @@ public class UserController {
     public BaseResponse<List<User>> userSearch(String username ,HttpServletRequest request) {
         //是否管理员
         if (!isAdmin(request)){
-            return new ArrayList<>();
+            throw new BusinessException(ErrorCode.PARMS_ERORR);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {

@@ -2,6 +2,8 @@ package com.lvye.usercenterbackend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lvye.usercenterbackend.common.ErrorCode;
+import com.lvye.usercenterbackend.exception.BusinessException;
 import com.lvye.usercenterbackend.model.domain.User;
 import com.lvye.usercenterbackend.service.UserService;
 import com.lvye.usercenterbackend.mapper.UserMapper;
@@ -12,7 +14,6 @@ import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.Session;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private UserMapper userMapper;
     /**
      * 盐值
-     * 为了加密后的密码更难破解
+     * 加密后的密码更难破解
      */
     private static final String SALT = "lvye" ;
 
@@ -40,16 +41,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //1. 校验
         if (StringUtils.isAnyBlank(userAccount,userPassword, chackPassword)){
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"参数为空");
         }
         if (userAccount.length()< 4 ){
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"用户账号小于4位");
         }
         if (userPassword.length() < 8 || chackPassword.length() < 8){
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"用户密码过短");
         }
         if (planetCode.length() > 5){
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"星球编号过长");
         }
         //校验账户不能含有特殊字符
         String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
