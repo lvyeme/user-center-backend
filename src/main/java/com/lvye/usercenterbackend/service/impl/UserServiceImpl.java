@@ -60,21 +60,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //校验密码和校验密码是否一致
         if (!userPassword.equals(chackPassword)){
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"两次密码不一致");
         }
         //账户不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount",userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"账户重复");
         }
         //编号不能重复
         queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("planetCode",planetCode);
         count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            throw new BusinessException(ErrorCode.PARMS_ERORR,"编号重复");
         }
         //2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT +

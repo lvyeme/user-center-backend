@@ -80,7 +80,7 @@ public class UserController {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null){
-            return null;
+            throw new BusinessException(ErrorCode.NO_LOGIN);
         }
         Long userId = currentUser.getId();
         //TODO 判断用户是否合法
@@ -92,7 +92,7 @@ public class UserController {
     public BaseResponse<List<User>> userSearch(String username ,HttpServletRequest request) {
         //是否管理员
         if (!isAdmin(request)){
-            throw new BusinessException(ErrorCode.PARMS_ERORR);
+            throw new BusinessException(ErrorCode.NO_AUTH);
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(username)) {
